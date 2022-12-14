@@ -1,5 +1,7 @@
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /*
@@ -18,6 +20,8 @@ public class User {
     private ArrayList<User> followers;
     private ArrayList<User> following;
     private ArrayList<String> tweetList;
+    private long creationTime;
+    private long lastUpdateTime;
 
     public User() {
 
@@ -33,11 +37,29 @@ public class User {
         following = new ArrayList<>();
         tweetList = new ArrayList<>();
         addPropertyChangeListener(myFeed);
+
+        System.out.println("Creation time:");
+        creationTime = System.currentTimeMillis();
+        showCreationTime(creationTime);
+
+    }
+
+    private void showCreationTime(long creationTime) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+        Date resultdate = new Date(creationTime);
+        System.out.println(sdf.format(resultdate));
     }
 
     // Adds a property change listener
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         support.addPropertyChangeListener(listener);
+        showUpdateTime();
+    }
+
+    private void showUpdateTime() {
+        System.out.println("Last update: ");
+        lastUpdateTime = System.currentTimeMillis();
+        showCreationTime(lastUpdateTime);
     }
 
     public void addFollowers(User newFollower) {
@@ -54,6 +76,7 @@ public class User {
         support.firePropertyChange("tweet", this.tweet, tweet);
         tweetList.add(tweet);
         setTweet(tweet);
+        showUpdateTime();
     }
 
     // getters and setter

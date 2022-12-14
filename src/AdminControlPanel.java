@@ -34,9 +34,9 @@ public class AdminControlPanel extends JPanel implements ActionListener, MouseLi
     private JButton showGroupTotalButton;
     private JButton showMessageTotalButton;
     private JButton showPositivePercentageButton;
+    private JButton idVerificationButton;
 
     // panels
-    private JPanel topRightPanel;
     private JPanel bottomRightPanel;
 
     // labels
@@ -127,6 +127,9 @@ public class AdminControlPanel extends JPanel implements ActionListener, MouseLi
         showMessageTotalButton = new JButton("Show Message Total");
         showPositivePercentageButton = new JButton("Show Positive Percentage");
 
+        idVerificationButton = new JButton("ID Verification");
+        idVerificationButton.addActionListener(this);
+
         // init tree compnents
 
         treeView = new TreeView();
@@ -137,7 +140,6 @@ public class AdminControlPanel extends JPanel implements ActionListener, MouseLi
         this.add(treeView);
 
         // panels
-        topRightPanel = new JPanel();
         bottomRightPanel = new JPanel();
         addBottomRightPanel();
 
@@ -154,6 +156,7 @@ public class AdminControlPanel extends JPanel implements ActionListener, MouseLi
         addGroupButton.setBounds(400, 90, 100, 25);
         openUserViewButton.setBounds(250, 150, 250, 25);
         openUserViewButton.setEnabled(false);
+        idVerificationButton.setBounds(250, 200, 250, 25);
 
         // add components
         this.add(userIdTextField);
@@ -163,34 +166,36 @@ public class AdminControlPanel extends JPanel implements ActionListener, MouseLi
         this.add(addUserButton);
         this.add(addGroupButton);
         this.add(openUserViewButton);
+        this.add(idVerificationButton);
 
     }
 
-    public void addTopRightPanel() {
+    // public void addTopRightPanel() {
 
-        topRightPanel.setBackground(Color.darkGray);
-        topRightPanel.setBounds(200, 15, 350, 150);
-        topRightPanel.setLayout(null);
+    // topRightPanel.setBackground(Color.darkGray);
+    // topRightPanel.setBounds(200, 15, 350, 150);
+    // topRightPanel.setLayout(null);
 
-        // init text fields
-        userIdTextField.setBounds(50, 15, 100, 25);
-        groupIdTextField.setBounds(50, 55, 100, 25);
+    // // init text fields
+    // userIdTextField.setBounds(50, 15, 100, 25);
+    // groupIdTextField.setBounds(50, 55, 100, 25);
 
-        // init buttons
-        addUserButton.setBounds(200, 15, 100, 25);
-        addGroupButton.setBounds(200, 55, 100, 25);
-        openUserViewButton.setBounds(50, 110, 250, 25);
+    // // init buttons
+    // addUserButton.setBounds(200, 15, 100, 25);
+    // addGroupButton.setBounds(200, 55, 100, 25);
+    // openUserViewButton.setBounds(50, 110, 250, 25);
 
-        // add components
-        topRightPanel.add(userIdTextField);
-        topRightPanel.add(groupIdTextField);
-        topRightPanel.add(addUserButton);
-        topRightPanel.add(addGroupButton);
-        topRightPanel.add(openUserViewButton);
+    // // add components
+    // topRightPanel.add(userIdTextField);
+    // topRightPanel.add(groupIdTextField);
+    // topRightPanel.add(addUserButton);
+    // topRightPanel.add(addGroupButton);
+    // topRightPanel.add(openUserViewButton);
+    // topRightPanel.add(idVerificationButton);
 
-        // add top right panel to admin control panel
-        this.add(topRightPanel);
-    }
+    // // add top right panel to admin control panel
+    // this.add(topRightPanel);
+    // }
 
     public void addBottomRightPanel() {
 
@@ -250,9 +255,9 @@ public class AdminControlPanel extends JPanel implements ActionListener, MouseLi
 
         } else if (e.getSource() == showUserTotalButton) {
 
-            String mesage = visitor.visit(userTotal);
+            String message = visitor.visit(userTotal);
             String labelString = "Total Users: ";
-            createDialogBox(mesage, labelString);
+            createDialogBox(message, labelString);
 
         } else if (e.getSource() == showGroupTotalButton) {
 
@@ -273,7 +278,41 @@ public class AdminControlPanel extends JPanel implements ActionListener, MouseLi
             String labelString = "Positive Message %: ";
             createDialogBox(message, labelString);
 
+        } else if (e.getSource() == idVerificationButton) {
+
+            String invalidMessage = "User IDs are invalid";
+            String validMessage = "User IDs are valid";
+            String errorLabel = "Error: ";
+            String messageLabel = "Message: ";
+            userList = userTotal.getUserList();
+
+            if (checkIdDuplicates(userList) && checkIdSpaces(userList)) {
+                createDialogBox(validMessage, messageLabel);
+            } else {
+                createDialogBox(invalidMessage, errorLabel);
+            }
+
         }
+    }
+
+    private boolean checkIdSpaces(ArrayList<User> userList) {
+        for (User user : userList) {
+            for (int j = 0; j < user.getUsername().length(); j++) {
+                if (user.getUsername().charAt(j) == ' ') {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean checkIdDuplicates(ArrayList<User> userList) {
+        for (int i = 0; i < userList.size() - 1; i++) {
+            if (userList.size() > 1 && userList.get(i).getUsername().equals(userList.get(i + 1).getUsername())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void createGroup() {
@@ -309,23 +348,14 @@ public class AdminControlPanel extends JPanel implements ActionListener, MouseLi
     private void createUser(String username) {
 
         int index;
-        user = findUser("@" + username);
+        user = new User("@" + username);
+        DefaultMutableTreeNode newUserNode = new DefaultMutableTreeNode(user.getUsername());
 
-        if (user == null) {
-            user = new User("@" + username);
-            DefaultMutableTreeNode newUserNode = new DefaultMutableTreeNode(user.getUsername());
-            userTotal.getUserList().add(user);
-            index = selectedNode.getChildCount();
-            selectedNode.insert(newUserNode, index);
-
-            treeView.getTreeModel().insertNodeInto(newUserNode,
-                    selectedNode, 0);
-
-        } else {
-            String message = "Username taken";
-            String labelString = "Error: ";
-            createDialogBox(message, labelString);
-        }
+        userTotal.getUserList().add(user);
+        index = selectedNode.getChildCount();
+        selectedNode.insert(newUserNode, index);
+        treeView.getTreeModel().insertNodeInto(newUserNode,
+                selectedNode, 0);
 
     }
 
