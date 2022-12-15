@@ -35,6 +35,7 @@ public class AdminControlPanel extends JPanel implements ActionListener, MouseLi
     private JButton showMessageTotalButton;
     private JButton showPositivePercentageButton;
     private JButton idVerificationButton;
+    private JButton lastUpdatedUserButton;
 
     // panels
     private JPanel bottomRightPanel;
@@ -60,6 +61,7 @@ public class AdminControlPanel extends JPanel implements ActionListener, MouseLi
     private ArrayList<String> tweetList;
     private ArrayList<String> positiveWordsList;
     private ArrayList<UserViewPanel> userPanels;
+    private ArrayList<User> lastUpdatedUser;
 
     // tree components
     private DefaultMutableTreeNode selectedNode;
@@ -103,6 +105,7 @@ public class AdminControlPanel extends JPanel implements ActionListener, MouseLi
         tweetList = new ArrayList<String>();
         positiveWordsList = new ArrayList<String>();
         userPanels = new ArrayList<>();
+        lastUpdatedUser = new ArrayList<User>();
 
         // init text areas
         userIdTextField = new JTextField();
@@ -130,6 +133,9 @@ public class AdminControlPanel extends JPanel implements ActionListener, MouseLi
         idVerificationButton = new JButton("ID Verification");
         idVerificationButton.addActionListener(this);
 
+        lastUpdatedUserButton = new JButton("Last update");
+        lastUpdatedUserButton.addActionListener(this);
+
         // init tree compnents
 
         treeView = new TreeView();
@@ -156,7 +162,8 @@ public class AdminControlPanel extends JPanel implements ActionListener, MouseLi
         addGroupButton.setBounds(400, 90, 100, 25);
         openUserViewButton.setBounds(250, 150, 250, 25);
         openUserViewButton.setEnabled(false);
-        idVerificationButton.setBounds(250, 200, 250, 25);
+        idVerificationButton.setBounds(250, 180, 250, 25);
+        lastUpdatedUserButton.setBounds(250, 210, 250, 25);
 
         // add components
         this.add(userIdTextField);
@@ -167,35 +174,9 @@ public class AdminControlPanel extends JPanel implements ActionListener, MouseLi
         this.add(addGroupButton);
         this.add(openUserViewButton);
         this.add(idVerificationButton);
+        this.add(lastUpdatedUserButton);
 
     }
-
-    // public void addTopRightPanel() {
-
-    // topRightPanel.setBackground(Color.darkGray);
-    // topRightPanel.setBounds(200, 15, 350, 150);
-    // topRightPanel.setLayout(null);
-
-    // // init text fields
-    // userIdTextField.setBounds(50, 15, 100, 25);
-    // groupIdTextField.setBounds(50, 55, 100, 25);
-
-    // // init buttons
-    // addUserButton.setBounds(200, 15, 100, 25);
-    // addGroupButton.setBounds(200, 55, 100, 25);
-    // openUserViewButton.setBounds(50, 110, 250, 25);
-
-    // // add components
-    // topRightPanel.add(userIdTextField);
-    // topRightPanel.add(groupIdTextField);
-    // topRightPanel.add(addUserButton);
-    // topRightPanel.add(addGroupButton);
-    // topRightPanel.add(openUserViewButton);
-    // topRightPanel.add(idVerificationButton);
-
-    // // add top right panel to admin control panel
-    // this.add(topRightPanel);
-    // }
 
     public void addBottomRightPanel() {
 
@@ -291,8 +272,15 @@ public class AdminControlPanel extends JPanel implements ActionListener, MouseLi
             } else {
                 createDialogBox(invalidMessage, errorLabel);
             }
-
+        } else if (e.getSource() == lastUpdatedUserButton) {
+            String message = lastUpdatedUser.get(lastUpdatedUser.size() - 1).getUsername();
+            String labelString = "Last update: ";
+            createDialogBox(message, labelString);
         }
+    }
+
+    public ArrayList<User> getLastUpdatedUser() {
+        return lastUpdatedUser;
     }
 
     private boolean checkIdSpaces(ArrayList<User> userList) {

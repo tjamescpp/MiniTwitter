@@ -121,6 +121,11 @@ public class User {
         this.following = following;
     }
 
-    // may need a method to add user to jtree
+    public long getLastUpdateTime() {
+        return lastUpdateTime;
+    }
 
+    public void setLastUpdateTime(long lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
+    }
 }

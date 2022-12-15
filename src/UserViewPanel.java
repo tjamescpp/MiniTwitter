@@ -159,16 +159,10 @@ public class UserViewPanel extends JFrame implements ActionListener {
         twitterFeed.add(feed.getTweets().get(size - 1));
 
         for (int i = 0; i < twitterFeed.size(); i++) {
-            // twitterFeed.add(feed.getTweets().get(size - 1));
             System.out.println(twitterFeed.get(i));
         }
 
         tweets = new String[twitterFeed.size()];
-
-        // for (int i = 0; i < tweets.length; i++) {
-        // tweets[i] = feed.getTweets().get(i);
-        // System.out.println(tweets[i]);
-        // }
 
         for (int i = 0; i < twitterFeed.size(); i++) {
             tweets[i] = twitterFeed.get(i);
@@ -227,6 +221,7 @@ public class UserViewPanel extends JFrame implements ActionListener {
         user.addTweet(user.getUsername() + ": " + tweetMessage.getText());
         messageTotal.addMessage(user.getTweet());
         admin.getMessageTotal().addMessage(user.getTweet());
+        admin.getLastUpdatedUser().add(user);
         addToNewsFeed(userFeed);
 
         userFeed.printTweets();
